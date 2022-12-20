@@ -1,0 +1,149 @@
+<!Doctype html>
+	<html lang = "en">
+		<head>
+			<!--Page simple configurations-->
+			<meta charset = "utf-8" name = "viewport"/>
+			<title>Nodejs with Socket-io</title>
+			<!-- The web page styles-->
+			<style>
+				/*Sender icon*/
+				div.send-icon svg {
+					transform: translateY(3px);
+					margin-right: 12px;
+					cursor: pointer;
+				}
+
+				/*Input hover effect*/
+				div.message-ctn input:hover {
+					color: steelblue;
+					font-weight: bold;
+				}
+				
+				/*Message container*/
+				div.message-ctn {
+					padding: 10px 36px 10px 10px;
+					width: 100%;
+				}
+
+				/*Basic label design*/
+				label, input {
+					letter-spacing: 1.5px;
+					user-select: none;
+				}
+
+				/*Message box container placeholder*/
+				div.message-ctn input::placeholder {
+					font-style: italic;
+				}
+
+				/*Messages text hover effect design pattern*/
+				div.message-text:hover {
+					background-color: steelblue;
+				}
+
+				/*Basic body design*/
+				body {
+					box-sizing: border-box;
+					padding: 0;
+					margin: 0;
+				}
+
+				/*Message box container*/
+				div.message-ctn input {
+					box-shadow: inset 0 3px 3px gray;
+					padding: 5px 8px 5px 15px;
+					transition: color 0.4s;
+					border-radius: 30px;
+					font-weight: normal;
+					font-size: 15px;
+					outline: none;
+					color: #000;
+					border: none;
+					height: 20px;
+					width: 100%;
+				}
+
+				/*Message manager*/
+				div.msg-manager {
+					box-shadow: 0 0 5px black;
+					background-color: silver;
+					justify-content: center;
+					align-items: center;
+					position: fixed;
+					display: flex;
+					bottom: 0;
+					right: 0;
+					gap: 5px;
+					left: 0;
+				}
+
+				/*Messages text design pattern*/
+				div.message-text {
+					background-color: rgb(240, 240, 240);
+					transition: background-color 0.4s;
+					box-shadow: 0 3px 2px silver;
+					padding: 15px 15px 15px 15px;
+					margin: 15px 15px 0 15px;
+					border-radius: 5px;
+					cursor: pointer;
+				}
+			</style>
+		</head>
+		<body>
+			<!-- Message manager-->
+			<div class = "msg-manager">
+				<!--Input for user message manager-->
+				<div class = "message-ctn"><input type = "text" placeholder = "Message" title = "Write a message here !"/></div>
+				<!--Message sender icon-->
+				<div class = "send-icon" title = "Send this message to server ?">
+					<svg style = "enable-background:new 0 0 24 24;" viewBox = "0 0 24 24" height = "24px" width = "24px" fill = "#FFF">
+						<g><path d = "M21.5,11.1l-17.9-9C2.7,1.7,1.7,2.5,2.1,3.4l2.5,6.7L16,
+						12L4.6,13.9l-2.5,6.7c-0.3,0.9,0.6,1.7,1.5,1.2l17.9-9 C22.2,12.5,22.2,
+						11.5,21.5,11.1z"/></g>
+					</svg>
+				</div>
+			</div>
+			<!--Message text container-->
+			<div class = "messages-container"></div><br/><br/><br/><br/>
+			<!--Controller-->
+			<script src = "/socket.io/socket.io.js"></script>
+			<script>
+				// Attributes.
+				const msg_input = document.querySelector ("div.message-ctn > input[type='text']");
+				const msg_container = document.querySelector ("div.messages-container");
+				const send_icon = document.querySelector ("div.send-icon > svg");
+				const socket = io ();
+
+				// Sends the user message to server.
+				function send_message () {
+					// Contains the message value.
+					let message = String (msg_input.value).trimLeft ().trimRight ();
+					// Sends the passed input message to the server.
+					if (message.length !== 0) socket.emit ("user-message", message);
+					// Otherwise.
+					else alert ("No message found !");
+				}
+				
+				// Fixing "keydown" event on input message field.
+				msg_input.addEventListener ("keydown", event => {
+					if (event.key == "Enter") send_message ();
+				});
+				// Fixing "click" event on message sender icon.
+				send_icon.addEventListener ("click", () => send_message ());
+				// The current page is it connected to the socket io system ?
+				socket.on ("connect", () => console.log ("socket connected !"));
+				// Waiting for server result about a message.
+				socket.on ("server-result", (message) => {
+					msg_input.value = String ('');
+					let message_text = document.createElement ("div");
+					let label_text = document.createElement ("label");
+					message_text.classList.add ("message-text");
+					message_text.title = "Remove this message ?";
+					label_text.innerText = message;
+					message_text.appendChild (label_text);
+					msg_container.appendChild (message_text);
+					message_text.addEventListener ("click", () => msg_container.removeChild (message_text));
+				});
+			</script>
+		</body>
+	</html>
