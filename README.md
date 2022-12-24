@@ -14,7 +14,6 @@ This is the final result of the project:<br/><br/>
 ![](./nodejs-socket.io.png)
 
 ## Project installation
-
 ### <u>Install curl</u>:
 ```sh
 sudo apt install curl
@@ -22,16 +21,10 @@ sudo apt install curl
 
 ### <u>Install nodejs</u>:
 ```sh
-cd ~
-curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh
-```
-```sh
-sudo bash /tmp/nodesource_setup.sh
-```
-```sh
-sudo apt install nodejs
-```
-```sh
+cd ~;\
+curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh;\
+sudo bash /tmp/nodesource_setup.sh;\
+sudo apt install nodejs;\
 node -v
 ```
 
